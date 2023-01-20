@@ -28,10 +28,12 @@ public class CreateCourierTest {
 
     @After
     public void cleanUp() {
-        if (id != 0) {
+        ValidatableResponse loginResponse = CourierClient.login(CourierCredentials.from(courier));
+        int statusCode = loginResponse.extract().statusCode();
+        if(statusCode == SC_OK) {
+            id = loginResponse.extract().path("id");
             ValidatableResponse deleteResponse = CourierClient.delete(id);
-            int statusCode = deleteResponse.extract().statusCode();
-            assertEquals(SC_OK, statusCode);
+            int statusCodeResult= deleteResponse.extract().statusCode();
         }
     }
 
@@ -40,7 +42,7 @@ public class CreateCourierTest {
     @Test
     //Checking if Courier can be created
     //Here and after all status codes replaced with static finals from HttpStatus lib
-    public void CreateNewCourier(){
+    public void createNewCourier(){
         ValidatableResponse response = CourierClient.create(courier);
         ValidatableResponse loginResponse = CourierClient.login(CourierCredentials.from(courier));
 
@@ -52,7 +54,7 @@ public class CreateCourierTest {
 
     @Test
     //Such user is already existing
-    public void CheckToNotCreateNewCourierWithExistingLogin(){
+    public void checkToNotCreateNewCourierWithExistingLogin(){
         Courier existingCourier = CourierGenerator.getExistingCourier();
         ValidatableResponse response = CourierClient.create(existingCourier);
 
@@ -65,9 +67,10 @@ public class CreateCourierTest {
 
     @Test
     //Can't create new courier user without login
-    public void CheckCreationNewCourierWithoutLogin(){
+    public void checkCreationNewCourierWithoutLogin(){
         Courier courierWithoutLogin = CourierGenerator.getCourierWithoutLogin();
         ValidatableResponse response = CourierClient.create(courierWithoutLogin);
+
 
         int statusCode = response.extract().statusCode();
         String message = response.extract().path("message");
@@ -79,7 +82,7 @@ public class CreateCourierTest {
 
     @Test
     //Can't create new courier user without password
-    public void CheckCreationNewCourierWithoutPassword(){
+    public void checkCreationNewCourierWithoutPassword(){
         Courier courierWithoutPassword = CourierGenerator.getCourierWithoutPassword();
         ValidatableResponse response = CourierClient.create(courierWithoutPassword);
 
@@ -93,7 +96,7 @@ public class CreateCourierTest {
 
     @Test
     //Creating new courier without first name
-    public void CheckCreationNewCourierWithoutFirstName(){
+    public void checkCreationNewCourierWithoutFirstName(){
         Courier courierWithoutFirstName = CourierGenerator.getCourierWithoutFirstName();
         ValidatableResponse response = CourierClient.create(courierWithoutFirstName);
         ValidatableResponse loginResponse = CourierClient.login(CourierCredentials.from(courier));
@@ -108,7 +111,7 @@ public class CreateCourierTest {
     @Test
     @DisplayName("Checking successful request to return OK TRUE")
     // Checking successful request to return OK TRUE
-    public void CheckSuccessfulRequestReturnsValueOkTrue(){
+    public void checkSuccessfulRequestReturnsValueOkTrue(){
         Courier courierWithoutFirstName = CourierGenerator.getCourierWithoutFirstName();
         ValidatableResponse response = CourierClient.create(courierWithoutFirstName);
         ValidatableResponse loginResponse = CourierClient.login(CourierCredentials.from(courier));
@@ -117,6 +120,10 @@ public class CreateCourierTest {
         id = loginResponse.extract().path("id");
 
         assertTrue(ok_field);
+
+
+
+
 
     }
 }

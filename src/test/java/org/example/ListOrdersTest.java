@@ -21,7 +21,7 @@ public class ListOrdersTest {
 
     @Test
     // Get respond 200
-    public void CheckSuccessfulRespondGetOrderReturnStatusCode200(){
+    public void checkSuccessfulRespondGetOrderReturnStatusCode200(){
         ValidatableResponse response = OrderClient.getOrders();
         int statusCode = response.extract().statusCode();
 
@@ -30,7 +30,7 @@ public class ListOrdersTest {
 
     @Test
     // Request of order list returns not an empty array
-    public void CheckSuccessfulGetOrderReturnsNotEmptyArray(){
+    public void checkSuccessfulGetOrderReturnsNotEmptyArray(){
         ValidatableResponse response = OrderClient.getOrders();
 
         ArrayList orders = response.extract().path("orders");

@@ -24,14 +24,16 @@ public class LoginTest {
 
     @After
     public void cleanUp() {
-        if (id != 0) {
+        ValidatableResponse loginResponse = CourierClient.login(CourierCredentials.from(courier));
+        int statusCode = loginResponse.extract().statusCode();
+        if(statusCode == SC_OK) {
             CourierClient.delete(id);
         }
     }
 
     @Test
     // Successful login returns 200
-    public void CheckSuccessfulLoginReturnsStatusCode200(){
+    public void checkSuccessfulLoginReturnsStatusCode200(){
         CourierClient.create(courier);
 
         ValidatableResponse loginResponse = CourierClient.login(CourierCredentials.from(courier));
@@ -44,7 +46,7 @@ public class LoginTest {
 
     @Test
     // Successful login returns id
-    public void CheckSuccessfulLoginReturnsID(){
+    public void checkSuccessfulLoginReturnsID(){
         CourierClient.create(courier);
 
         ValidatableResponse loginResponse = CourierClient.login(CourierCredentials.from(courier));
@@ -55,7 +57,7 @@ public class LoginTest {
 
     @Test
     // Can't login without a correct password, returns 400
-    public void CheckAuthorizationWithoutPasswordReturnsStatusCode400(){
+    public void checkAuthorizationWithoutPasswordReturnsStatusCode400(){
 
         CourierCredentials courierWithoutPassword = new CourierCredentials(courier.getLogin(), "");
         ValidatableResponse loginResponse = CourierClient.login(courierWithoutPassword);
@@ -70,7 +72,7 @@ public class LoginTest {
 
     @Test
     // Can't authorize without login and returns 400
-    public void CheckAuthorizationWithoutLoginReturnsStatusCode400(){
+    public void checkAuthorizationWithoutLoginReturnsStatusCode400(){
         CourierCredentials courierWithoutLogin = new CourierCredentials("", courier.getPassword());
         ValidatableResponse loginResponse = CourierClient.login(courierWithoutLogin);
 
@@ -83,7 +85,7 @@ public class LoginTest {
 
     @Test
     // Login with not existing user
-    public void CheckLoginWithNotExistingUserReturnsStatusCode404(){
+    public void checkLoginWithNotExistingUserReturnsStatusCode404(){
         CourierCredentials courierWithoutLogin = new CourierCredentials("ТАКОЙ_ЮЗЕР_НЕ_СУЩЕСТВУЕТ", "12345");
         ValidatableResponse loginResponse = CourierClient.login(courierWithoutLogin);
 
